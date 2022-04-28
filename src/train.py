@@ -34,16 +34,17 @@ final_features = [
 ]
 print(final_features)
 
-# Hyperparameters
 
 # Extra Trees Params
-# params={'n_estimators': 400,
-#        'criterion': 'gini',
-#        'n_jobs': -1,
-#        'max_features': 'sqrt'}
+params = {
+    "n_estimators": 400,
+    "criterion": "gini",
+    "n_jobs": -1,
+    "max_features": "sqrt",
+}
 
 # Random Forest Params
-params = {"n_estimators": 400, "n_jobs": -1, "max_features": "sqrt"}
+# params = {"n_estimators": 400, "n_jobs": -1, "max_features": "sqrt"}
 
 # GBC Params
 # params={'n_estimators': 400,
@@ -184,7 +185,9 @@ def read_pickle(file_path, length=5):
 
 def main(scaling=True, thresholding_models=False):
     scale = scaling
-    df = read_pickle("ACP-alternate_preprocessed-terminal_v1.pkl")
+    df = read_pickle(
+        "ACP-alternate_preprocessed-terminal_v1.pkl"
+    )  # insert model pickle file here
 
     # df = read_pickle('ACP-preprocessed-terminal_v2.pkl')
     print(f"Dataframe shape:{df.shape}")
@@ -212,8 +215,8 @@ def main(scaling=True, thresholding_models=False):
     best_acc = 0
 
     for i in range(iters):
-        # clf = ExtraTreesClassifier(**params)
-        clf = RandomForestClassifier(**params)
+        clf = ExtraTreesClassifier(**params)
+        # clf = RandomForestClassifier(**params)
         # clf = GradientBoostingClassifier(**params)
 
         dic1 = internal_validation(clf, X_train, y_train)
