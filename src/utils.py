@@ -1,7 +1,8 @@
+from datetime import datetime
+
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
-
 
 # Setting up relevant hashmaps
 
@@ -19,6 +20,10 @@ triplets_combi_dict = {
 
 lst = std + pairwise
 magnus_dic = {v: k for k, v in enumerate(lst)}
+
+
+def getStandardTime():
+    return datetime.today().strftime("%Y-%m-%d-%H_%M")
 
 
 # create B1 matrix
