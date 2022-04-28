@@ -32,7 +32,8 @@ final_features = [
     "C15_natural",
     "C15_magnus",
 ]
-print(final_features)
+
+print(f"Features used: {final_features}")
 
 
 # Extra Trees Params

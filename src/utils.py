@@ -321,9 +321,8 @@ def k_mer_magnus(seq, length=2):
 
     subsequences = subsequences[1:]  # remove first item in list which is empty
 
-    output_tokens = [
-        magnus_dic[i] for i in subsequences
-    ]  # map subsequences to index e.g. [5, 5, 105, 2...]
+    # map subsequences to index
+    output_tokens = [magnus_dic[i] for i in subsequences]
 
     arr = np.zeros(
         420
