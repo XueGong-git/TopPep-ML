@@ -261,7 +261,7 @@ def main(scaling=True, thresholding_models=False):
             fpr, tpr, thresholds = roc_curve(y_test, preds)
 
             for j in range(1, len(thresholds)):
-                if 0.40 <= thresholds[j] <= 0.60:
+                if 0.40 <= thresholds[j] <= 0.60:  # probability threshold tuning
                     y_pred = (
                         classifier.predict_proba(X_test)[:, 1] >= thresholds[j]
                     ).astype(int)

@@ -128,14 +128,48 @@ def natural_encoding(df):
     return df
 
 
+def terminal_composition_raw(df):
+    df["N5"] = df.apply(
+        lambda x: utils.terminal_composition_construct(x["Peptides"], "N", x=5), axis=1
+    )
+    df["N10"] = df.apply(
+        lambda x: utils.terminal_composition_construct(x["Peptides"], "N", x=10), axis=1
+    )
+    df["N15"] = df.apply(
+        lambda x: utils.terminal_composition_construct(x["Peptides"], "N", x=15), axis=1
+    )
+    df["C5"] = df.apply(
+        lambda x: utils.terminal_composition_construct(x["Peptides"], "C", y=5), axis=1
+    )
+    df["C10"] = df.apply(
+        lambda x: utils.terminal_composition_construct(x["Peptides"], "C", y=10), axis=1
+    )
+    df["C15"] = df.apply(
+        lambda x: utils.terminal_composition_construct(x["Peptides"], "N", y=15), axis=1
+    )
+    df["N5C5"] = df.apply(
+        lambda x: utils.terminal_composition_construct(x["Peptides"], "NC", x=5, y=5),
+        axis=1,
+    )
+    df["N10C10"] = df.apply(
+        lambda x: utils.terminal_composition_construct(x["Peptides"], "NC", x=10, y=10),
+        axis=1,
+    )
+    df["N15C15"] = df.apply(
+        lambda x: utils.terminal_composition_construct(x["Peptides"], "NC", x=15, y=15),
+        axis=1,
+    )
+    return df
+
+
 def main():
     df = loading_raw_dataset()
     df = preprocessing_loaded_data(df)
-    # df = SpectPep_encoding(df)      # takes about 10mins to run
+    # df = SpectPep_encoding(df)         # takes about 10mins to run
     df = magnus_encoding(df)
     df = natural_encoding(df)
-    print(df.head())
-    print(df.shape)
+
+    df = terminal_composition_raw(df)
 
     # save dataframe as a pickle file
     df.to_pickle("ACP-alternate_dataset_preprocessed_v1.pkl", protocol=4)

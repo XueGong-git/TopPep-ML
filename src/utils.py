@@ -418,3 +418,24 @@ def natural_vector(peptide):
         vec.append([counter_letter, mean_position, scaled_2nd_moment])
 
     return np.array(vec).reshape(-1)
+
+
+def terminal_composition_construct(seq, option, x=None, y=None):
+    if option == "Normal":
+        seq = seq
+    elif option == "N":
+        seq = seq[
+            0:x  # even if sequence is smaller in length than terminal composition chosen, return whatever there is
+        ]
+    elif option == "C":
+        if len(seq) >= y:
+            seq = seq[len(seq) - y :]
+        else:
+            seq = seq
+    elif option == "NC":
+        if len(seq) >= x + y:
+            seq = seq[0:x] + seq[len(seq) - y :]
+        else:
+            C_seq = seq[-y:]
+            seq = seq[0:x] + C_seq
+    return seq
