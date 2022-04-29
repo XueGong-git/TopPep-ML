@@ -1,7 +1,7 @@
-# AntiCP-Topo
+# Topology based machine learning model for the prediction of anticancer peptides
 
 This manual is for the code implementation of paper "Topology based machine learning model for the prediction of anticancer peptides".
-# Code Requirements
+## Code Requirements
 ---
         Platform: Python>=3.6, M
         Python Packages needed: math, numpy>=1.19.5, scipy>=1.4.1, scikit-learn>=0.20.3, pandas>=1.1.3
@@ -25,34 +25,31 @@ README.md     	: This file provide information about this package
 
 data            : datasets used taken from https://webs.iiitd.edu.in/raghava/anticp2/download.php
 
-src/construct_dataset.py : Constructing dataframe with features from raw files
-
 src/utils.py    : Documentation of feature encoding methods
 
-src/train.py    : Main Training script to run
+src/construct_dataset.py : Constructing dataframe with features from raw files
+
+src/train.py    : Main Training script to run after constructing dataset.
 
 ```
-## Feature generation using SpectPep, magnus & natural representation
+## Feature generation using SpectPep, Magnus & Natural representation
 
-For each peptide sequence, the respective feature encoding methods will generate feature vectors for downstream machine learning algorithms.
+For each peptide sequence, the respective feature encoding methods will generate feature vectors for training data into downstream machine learning algorithms.
 ```python
 def L0(args):
     # This function constructs a L0 (Laplacian) symmetric normalised matrix from its boundary matrices (B1).
-
 
 def L1(args):
     # This function constructs a L1 (Laplacian) symmetric normalised matrix from its boundary matrices (B2).
 
 
 def agg_magnus_vector(args):
-    # Given a input peptide sequence, generates a k-mer magnus vector for each window size and returns an aggregated magnus vector.
+    # Given a input peptide sequence, generates a k-mer magnus vector for given window size and returns an aggregated magnus vector.
 
 def nature_vector(dist):
-    # Given a input peptide sequence, generate 3 statistics for each unique amino acid and return all the results in a vector.
+    # Given a input peptide sequence, generate 3 statistics for each unique amino acid and return all the values in a natural vector.
 ```
 The above functions can be found in src/utils.py.
 
 ## Cite
-If you use this code in your research, please cite our paper:
-
-* To be inserted.
+If you use this code in your research, please cite our paper: Topology based machine learning model for the prediction of anticancer peptides.
