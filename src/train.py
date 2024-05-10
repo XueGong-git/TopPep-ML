@@ -20,18 +20,32 @@ from sklearn.model_selection import cross_val_score
 # from sklearnex import patch_sklearn
 # patch_sklearn()
 
+# features for alternate dataset (Dataset A)
+
+#final_features = [
+#    "Mean_magnus",
+#    "Natural_Vector",
+#    "L0_ev_avg",
+#    "L1_ev_avg",
+#    "L0_ev_count",
+#    "L1_ev_count",
+#    "C15_natural",
+#    "C15_magnus_mean"
+#]
+
+
+# features for main datset (Dataset B)
 
 final_features = [
     "Mean_magnus",
-    "Sum_magnus",
     "Natural_Vector",
     "L0_ev_avg",
     "L1_ev_avg",
     "L0_ev_count",
     "L1_ev_count",
-    "C15_natural",
-    "C15_magnus",
-]
+    "N15C15_natural", 
+    "N15C15_magnus_mean"
+    ]
 
 print(f"Features used: {final_features}")
 
@@ -90,7 +104,7 @@ def train_test_split(df, final_features=None, shuffle=False):
     random.seed(42)
 
     x = df.get(final_features).to_numpy()
-    labels = df.get("Labels").to_numpy()
+    labels = df.get("Targets").to_numpy()
 
     # prepare to concat
     concat_features = []
@@ -184,11 +198,25 @@ def read_pickle(file_path, length=5):
     return df
 
 
-def main(scaling=True, thresholding_models=False):
+def main(dataname = None, scaling=True, thresholding_models=False):
     scale = scaling
-    df = read_pickle(
-        "ACP-alternate_preprocessed-terminal_v1.pkl"
-    )  # insert model pickle file here
+    
+    if dataname == "A":
+        
+        df = read_pickle(
+        
+        # Dataset A (alternate dataset)
+        "ACP-alternate_dataset_preprocessed_v1.pkl"
+        )  # insert model pickle file here
+    elif dataname == "B":
+        df = read_pickle(
+        # Dataset B (main dataset) 
+        "ACP-main_dataset_preprocessed_v1.pkl"
+
+        )  # insert model pickle file here
+    else:
+        raise ValueError(f"Invalid dataset name {dataname}. Choose 'A' for alternate dataset or 'B' for main dataset.")
+
 
     # df = read_pickle('ACP-preprocessed-terminal_v2.pkl')
     print(f"Dataframe shape:{df.shape}")
@@ -211,7 +239,7 @@ def main(scaling=True, thresholding_models=False):
         X_test = scaler.transform(X_test)
 
     # training loop
-    all_results = []
+    all_results = [] 
     clfs = []
     best_acc = 0
 
@@ -306,4 +334,4 @@ def main(scaling=True, thresholding_models=False):
 
 
 if __name__ == "__main__":
-    main(scaling=True, thresholding_models=False)
+    main(dataname = "A", scaling=True, thresholding_models=True )

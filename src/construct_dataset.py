@@ -12,14 +12,29 @@ def read_input(path):
     return lst
 
 
-def loading_raw_dataset():
+def loading_raw_dataset(dataname) :
     # reading inputs
-    neg_train = read_input("data/alternate_dataset/neg_train_alternate.txt")
-    pos_train = read_input("data/alternate_dataset/pos_train_alternate.txt")
-
-    neg_test = read_input("data/alternate_dataset/neg_test_alternate.txt")
-    pos_test = read_input("data/alternate_dataset/pos_test_alternate.txt")
-
+    
+    if dataname == "A":
+        
+        # alternate dataset (dataset A)
+        neg_train = read_input("../data/alternate_dataset/neg_train_alternate.txt")
+        pos_train = read_input("../data/alternate_dataset/pos_train_alternate.txt")
+    
+        neg_test = read_input("../data/alternate_dataset/neg_test_alternate.txt")
+        pos_test = read_input("../data/alternate_dataset/pos_test_alternate.txt")
+        
+    elif dataname == "B":
+        # main dataset (dataset B)
+        neg_train = read_input("../data/main_dataset/neg_train_main.txt")
+        pos_train = read_input("../data/main_dataset/pos_train_main.txt")
+    
+        neg_test = read_input("../data/main_dataset/neg_test_main.txt")
+        pos_test = read_input("../data/main_dataset/pos_test_main.txt")
+        
+    else:
+        raise ValueError(f"Invalid dataset name {dataname}. Choose 'A' for alternate dataset or 'B' for main dataset.")
+    
     # creating train labels
     pos_train_labels = np.ones(len(pos_train))
     neg_train_labels = np.zeros(len(neg_train))
@@ -52,7 +67,9 @@ def loading_raw_dataset():
     # Assign 0 to test set rows
     df_test["Train"] = 0
 
-    df = df.append(df_test).reset_index(drop=True)
+    pd.concat([df, df_test], ignore_index=True)
+    #df = df.append(df_test).reset_index(drop=True)
+    df = pd.concat([df, df_test], ignore_index=True)
 
     # change col type of targets and train to categorical
     df["Targets"] = df["Targets"].astype("category")
@@ -93,7 +110,7 @@ def SpectPep_encoding(df):
     df["L1_ev_count"] = df.apply(lambda x: utils.gen_eigenvalues(x["L1_count"]), axis=1)
     df["L1_ev_avg"] = df.apply(lambda x: utils.gen_eigenvalues(x["L1_avg"]), axis=1)
     df["L1_ev_std"] = df.apply(lambda x: utils.gen_eigenvalues(x["L1_std"]), axis=1)
-    return df.drop(
+    df = df.drop(
         columns=[
             "B1_count",
             "B1_avg",
@@ -104,9 +121,10 @@ def SpectPep_encoding(df):
             "L1_count",
             "L1_avg",
             "L1_std",
-        ],
-        inplace=True,
+        ]
+        , inplace=False,
     )
+    return df
 
 
 def magnus_encoding(df):
@@ -117,12 +135,32 @@ def magnus_encoding(df):
         lambda x: utils.agg_magnus_vector(x["Peptides"], 5, aggregation="sum"), axis=1
     )
 
+    df["C15_magnus_mean"] = df.apply(
+    lambda x: utils.agg_magnus_vector(x["C15"], 5, aggregation="mean"), axis=1
+    )
+
+    df["C15_magnus_sum"] = df.apply(    
+    lambda x: utils.agg_magnus_vector(x["C15"], 5, aggregation="sum"), axis=1
+    )
+
+    df["N15C15_magnus_mean"] = df.apply(
+    lambda x: utils.agg_magnus_vector(x["N15C15"], 5, aggregation="mean"), axis=1
+    )
+    df["N15C15_magnus_sum"] = df.apply(
+    lambda x: utils.agg_magnus_vector(x["N15C15"], 5, aggregation="sum"), axis=1
+    )
     return df
 
 
 def natural_encoding(df):
     df["Natural_Vector"] = df.apply(
         lambda x: utils.natural_vector(x["Peptides"]), axis=1
+    )
+    df["C15_natural"] = df.apply(
+        lambda x: utils.natural_vector(x["C15"]), axis=1
+    )
+    df["N15C15_natural"] = df.apply(
+        lambda x: utils.natural_vector(x["N15C15"]), axis=1
     )
 
     return df
@@ -161,18 +199,38 @@ def terminal_composition_raw(df):
     )
     return df
 
+def read_pickle(file_path, length=5):
+    df = pd.read_pickle(file_path)
+    df = df[df["Length"] >= length].reset_index(drop=True)
+
+    return df
+
 
 def main():
-    df = loading_raw_dataset()
+
+    
+    # dataset A for alternate dataset
+    df = loading_raw_dataset(dataname="A")
     df = preprocessing_loaded_data(df)
-    # df = SpectPep_encoding(df)         # takes about 10mins to run
+    df = SpectPep_encoding(df)         # takes about 10mins to run
+    df = terminal_composition_raw(df)
     df = magnus_encoding(df)
     df = natural_encoding(df)
 
-    df = terminal_composition_raw(df)
 
     # save dataframe as a pickle file
     df.to_pickle("ACP-alternate_dataset_preprocessed_v1.pkl", protocol=4)
+
+
+    # dataset B for main dataset
+    df = loading_raw_dataset(dataname = "B")
+    df = preprocessing_loaded_data(df)
+    df = SpectPep_encoding(df)         # takes about 10mins to run
+    df = terminal_composition_raw(df)
+    df = magnus_encoding(df)
+    df = natural_encoding(df)
+    # save dataframe as a pickle file
+    df.to_pickle("ACP-main_dataset_preprocessed_v1.pkl", protocol=4)
 
 
 if __name__ == "__main__":
