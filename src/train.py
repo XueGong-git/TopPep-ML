@@ -24,6 +24,7 @@ from sklearn.model_selection import cross_val_score
 
 #final_features = [
 #    "Mean_magnus",
+#    "Sum_magnus",
 #    "Natural_Vector",
 #    "L0_ev_avg",
 #    "L1_ev_avg",
@@ -38,6 +39,7 @@ from sklearn.model_selection import cross_val_score
 
 final_features = [
     "Mean_magnus",
+    "Sum_magnus",
     "Natural_Vector",
     "L0_ev_avg",
     "L1_ev_avg",
@@ -248,19 +250,19 @@ def main(dataname = None, scaling=True, thresholding_models=False):
         # clf = RandomForestClassifier(**params)
         # clf = GradientBoostingClassifier(**params)
 
-        dic1 = internal_validation(clf, X_train, y_train)
+        dic1 = internal_validation(clf, X_train, y_train)  # internal validation result
         clf.fit(X_train, y_train)
         clfs.append(clf)
         y_pred = clf.predict(X_test)
-        dic2 = print_metric(clf, y_test, y_pred)
-        dic1.update(dic2)
-        all_results.append(dic1)
+        dic2 = print_metric(clf, y_test, y_pred) # test performance
+        dic1.update(dic2) # update the table with test performance
+        all_results.append(dic1)  # test performance
         print(f"{i+1}/{iters} done!")
 
         if dic1["acc"] >= best_acc:
             best_acc = dic1["acc"]
 
-    results_df = pd.DataFrame(all_results)
+    results_df = pd.DataFrame(all_results) # test performance
     results_df = results_df.round(3)
 
     # get a dataframe of the parameters
@@ -271,7 +273,7 @@ def main(dataname = None, scaling=True, thresholding_models=False):
     utils_df = pd.concat([features_list, hparams_list], axis=1)
 
     # get a dataframe of the mean results
-    mean_results_df = results_df.mean()
+    mean_results_df = results_df.mean() # mean test performance
     mean_results_df = mean_results_df.transpose()
     print(mean_results_df)
 
@@ -310,6 +312,19 @@ def main(dataname = None, scaling=True, thresholding_models=False):
         print("Done finding best thresholded models!")
 
         best_metrics_all_df = pd.DataFrame(best_metrics_all)
+        
+        
+        # Calculate mean and standard deviation for each column
+
+        mean_values = best_metrics_all_df.mean()
+        std_dev_values = best_metrics_all_df.std()
+        max_values = best_metrics_all_df.max()
+
+        # Create a DataFrame with these values
+        summary_df = pd.DataFrame([mean_values, std_dev_values, max_values], index=['Mean', 'Standard Deviation', 'Maximum'])
+
+        # Append the summary DataFrame to the original DataFrame
+        best_metrics_all_df = pd.concat([best_metrics_all_df, summary_df])
 
     # setting file path
     filePath = "Etrees"
@@ -319,17 +334,18 @@ def main(dataname = None, scaling=True, thresholding_models=False):
     # read in hyperparameters as well
     with pd.ExcelWriter(f"{filePath}/output_{time}.xlsx") as writer:
 
-        mean_results_df.to_excel(writer, sheet_name="mean_results")
-        results_df.to_excel(writer, sheet_name="results")
-        utils_df.to_excel(writer, sheet_name="parameters")
+        mean_results_df.to_excel(writer, sheet_name="mean_results")  # mean test performance using prediction threshold of 0.5
+        results_df.to_excel(writer, sheet_name="results")   # test performance using prediction threshold of 0.5
+        utils_df.to_excel(writer, sheet_name="parameters") # model parameters
 
         if thresholding_models is True:
             best_metrics_all_df.to_excel(writer, sheet_name="Thresholded_results")
-            print(
-                best_metrics_all_df.loc[
-                    best_metrics_all_df["acc"] == max(best_metrics_all_df["acc"])
-                ]
-            )
+            #print(
+            #    best_metrics_all_df.loc[
+            #        best_metrics_all_df["acc"] == max(best_metrics_all_df["acc"])
+            #    ]
+            #) # test performance using optimal prediction threshold
+            print(summary_df)
         print("Results have been populated to excel!")
 
 
