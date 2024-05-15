@@ -53,7 +53,7 @@ def B1(seq, feature=None, skip=0):
         mat = np.zeros((20, 400))
         for i in range(len(seq) - 1 - skip):
             check = seq[i : i + 2 + skip]  # get subset of letters
-            check = seq[0] + seq[-1]  # get first and last letter in subset
+            #check = seq[0] + seq[-1]  # get first and last letter in subset
             if check in pairwise:
                 row1 = letter_dict[
                     check[0]

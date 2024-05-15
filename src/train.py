@@ -24,7 +24,7 @@ from sklearn.model_selection import cross_val_score
 
 #final_features = [
 #    "Mean_magnus",
-#    "Sum_magnus",
+    #"Sum_magnus",
 #    "Natural_Vector",
 #    "L0_ev_avg",
 #    "L1_ev_avg",
@@ -318,10 +318,9 @@ def main(dataname = None, scaling=True, thresholding_models=False):
 
         mean_values = best_metrics_all_df.mean()
         std_dev_values = best_metrics_all_df.std()
-        max_values = best_metrics_all_df.max()
 
         # Create a DataFrame with these values
-        summary_df = pd.DataFrame([mean_values, std_dev_values, max_values], index=['Mean', 'Standard Deviation', 'Maximum'])
+        summary_df = pd.DataFrame([mean_values, std_dev_values], index=['Mean', 'Standard Deviation'])
 
         # Append the summary DataFrame to the original DataFrame
         best_metrics_all_df = pd.concat([best_metrics_all_df, summary_df])
@@ -340,14 +339,17 @@ def main(dataname = None, scaling=True, thresholding_models=False):
 
         if thresholding_models is True:
             best_metrics_all_df.to_excel(writer, sheet_name="Thresholded_results")
-            #print(
-            #    best_metrics_all_df.loc[
-            #        best_metrics_all_df["acc"] == max(best_metrics_all_df["acc"])
-            #    ]
-            #) # test performance using optimal prediction threshold
+            best_threshold_result =  best_metrics_all_df.loc[ best_metrics_all_df["acc"] == max(best_metrics_all_df["acc"])]
+            best_threshold_result.to_excel(writer, sheet_name="Best_thresholded_results")
+
+            print(
+                best_metrics_all_df.loc[
+                    best_metrics_all_df["acc"] == max(best_metrics_all_df["acc"])
+                ]
+            ) # test performance using optimal prediction threshold
             print(summary_df)
         print("Results have been populated to excel!")
 
 
 if __name__ == "__main__":
-    main(dataname = "A", scaling=True, thresholding_models=True )
+    main(dataname = "B", scaling=True, thresholding_models=True )
