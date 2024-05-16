@@ -22,58 +22,58 @@ from sklearn.model_selection import cross_val_score
 
 # features for alternate dataset (Dataset A)
 
+final_features = [
+    #"Mean_magnus",
+    #"Sum_magnus",
+#    "Natural_Vector",
+    "L0_ev_avg",
+    "L1_ev_avg",
+#    "L0_ev_count",
+#    "L1_ev_count",
+#    "C15_natural",
+#    "C15_magnus_mean"
+]
+
+
+# features for main datset (Dataset B)
+
 #final_features = [
 #    "Mean_magnus",
-    #"Sum_magnus",
+#    "Sum_magnus",
 #    "Natural_Vector",
 #    "L0_ev_avg",
 #    "L1_ev_avg",
 #    "L0_ev_count",
 #    "L1_ev_count",
-#    "C15_natural",
-#    "C15_magnus_mean"
-#]
-
-
-# features for main datset (Dataset B)
-
-final_features = [
-    "Mean_magnus",
-    "Sum_magnus",
-    "Natural_Vector",
-    "L0_ev_avg",
-    "L1_ev_avg",
-    "L0_ev_count",
-    "L1_ev_count",
-    "N15C15_natural", 
-    "N15C15_magnus_mean"
-    ]
+#    "N15C15_natural", 
+#    "N15C15_magnus_mean"
+#    ]
 
 print(f"Features used: {final_features}")
 
 
 # Extra Trees Params
-params = {
-    "n_estimators": 400,
-    "criterion": "gini",
-    "n_jobs": -1,
-    "max_features": "sqrt",
-}
+#params = {
+#    "n_estimators": 400,
+#    "criterion": "gini",
+#    "n_jobs": -1,
+#    "max_features": "sqrt",
+#}
 
 # Random Forest Params
 # params = {"n_estimators": 400, "n_jobs": -1, "max_features": "sqrt"}
 
 # GBC Params
-# params={'n_estimators': 400,
-#        'learning_rate': 0.01,
-#        'criterion': 'squared_error',
-#        'max_features':'sqrt',
-#        'subsample':0.8,
-#        'loss': 'deviance',
-#        'max_depth': 8}
+params={'n_estimators': 400,
+        'learning_rate': 0.01,
+        'criterion': 'squared_error',
+        'max_features':'sqrt',
+        'subsample':0.8,
+        'loss': 'log_loss',
+        'max_depth': 8}
 
 
-iters = 10
+iters = 5
 
 
 def getStandardTime():
@@ -246,10 +246,10 @@ def main(dataname = None, scaling=True, thresholding_models=False):
     best_acc = 0
 
     for i in range(iters):
-        clf = ExtraTreesClassifier(**params)
+        # clf = ExtraTreesClassifier(**params)
         # clf = RandomForestClassifier(**params)
-        # clf = GradientBoostingClassifier(**params)
-
+        clf = GradientBoostingClassifier(**params)
+        
         dic1 = internal_validation(clf, X_train, y_train)  # internal validation result
         clf.fit(X_train, y_train)
         clfs.append(clf)
@@ -352,4 +352,4 @@ def main(dataname = None, scaling=True, thresholding_models=False):
 
 
 if __name__ == "__main__":
-    main(dataname = "B", scaling=True, thresholding_models=True )
+    main(dataname = "A", scaling=True, thresholding_models=False )
