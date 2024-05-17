@@ -127,28 +127,64 @@ def SpectPep_encoding(df):
     return df
 
 
-def magnus_encoding(df):
+def magnus_encoding(df, window):
     df["Mean_magnus"] = df.apply(
-        lambda x: utils.agg_magnus_vector(x["Peptides"], 5, aggregation="mean"), axis=1
+        lambda x: utils.agg_magnus_vector(x["Peptides"], step_size = window, aggregation="mean"), axis=1
     )
     df["Sum_magnus"] = df.apply(
-        lambda x: utils.agg_magnus_vector(x["Peptides"], 5, aggregation="sum"), axis=1
+        lambda x: utils.agg_magnus_vector(x["Peptides"], step_size = window, aggregation="sum"), axis=1
     )
+    
 
+
+
+
+    # N5
+    df["N5_magnus_mean"] = df.apply(
+    lambda x: utils.agg_magnus_vector(x["N5"], step_size = window, aggregation="mean"), axis=1
+    )
+    
+    # N10
+    df["N10_magnus_mean"] = df.apply(
+    lambda x: utils.agg_magnus_vector(x["N10"], step_size = window, aggregation="mean"), axis=1
+    )
+    
+    # N15
+    df["N15_magnus_mean"] = df.apply(
+    lambda x: utils.agg_magnus_vector(x["N15"], step_size = window, aggregation="mean"), axis=1
+    )
+    
+    # C5
+    df["C5_magnus_mean"] = df.apply(
+    lambda x: utils.agg_magnus_vector(x["C5"], step_size = window, aggregation="mean"), axis=1
+    )
+    
+    # C10
+    df["C10_magnus_mean"] = df.apply(
+    lambda x: utils.agg_magnus_vector(x["C10"], step_size = window, aggregation="mean"), axis=1
+    )
+    
+    # C15 terminus magnus
     df["C15_magnus_mean"] = df.apply(
-    lambda x: utils.agg_magnus_vector(x["C15"], 5, aggregation="mean"), axis=1
+    lambda x: utils.agg_magnus_vector(x["C15"], step_size = window, aggregation="mean"), axis=1
     )
-
-    df["C15_magnus_sum"] = df.apply(    
-    lambda x: utils.agg_magnus_vector(x["C15"], 5, aggregation="sum"), axis=1
+    
+    # N5C5 terminus magnus
+    df["N5C5_magnus_mean"] = df.apply(
+    lambda x: utils.agg_magnus_vector(x["N5C5"], step_size = window, aggregation="mean"), axis=1
     )
-
+    
+    # N10C10 terminus magnus
+    df["N10C10_magnus_mean"] = df.apply(
+      lambda x: utils.agg_magnus_vector(x["N10C10"], step_size = window, aggregation="mean"), axis=1
+      )
+    
+    # N15C15 terminus magnus
     df["N15C15_magnus_mean"] = df.apply(
-    lambda x: utils.agg_magnus_vector(x["N15C15"], 5, aggregation="mean"), axis=1
+    lambda x: utils.agg_magnus_vector(x["N15C15"], step_size = window, aggregation="mean"), axis=1
     )
-    df["N15C15_magnus_sum"] = df.apply(
-    lambda x: utils.agg_magnus_vector(x["N15C15"], 5, aggregation="sum"), axis=1
-    )
+    
+    
     return df
 
 
@@ -156,8 +192,29 @@ def natural_encoding(df):
     df["Natural_Vector"] = df.apply(
         lambda x: utils.natural_vector(x["Peptides"]), axis=1
     )
+    df["N5_natural"] = df.apply(
+        lambda x: utils.natural_vector(x["N5"]), axis=1
+    )
+    df["N10_natural"] = df.apply(
+        lambda x: utils.natural_vector(x["N10"]), axis=1
+    )
+    df["N15_natural"] = df.apply(
+        lambda x: utils.natural_vector(x["N15"]), axis=1
+    )
+    df["C5_natural"] = df.apply(
+        lambda x: utils.natural_vector(x["C5"]), axis=1
+    )
+    df["C10_natural"] = df.apply(
+        lambda x: utils.natural_vector(x["C10"]), axis=1
+    )
     df["C15_natural"] = df.apply(
         lambda x: utils.natural_vector(x["C15"]), axis=1
+    )
+    df["N5C5_natural"] = df.apply(
+        lambda x: utils.natural_vector(x["N5C5"]), axis=1
+    )
+    df["N10C10_natural"] = df.apply(
+        lambda x: utils.natural_vector(x["N10C10"]), axis=1
     )
     df["N15C15_natural"] = df.apply(
         lambda x: utils.natural_vector(x["N15C15"]), axis=1
@@ -206,7 +263,7 @@ def read_pickle(file_path, length=5):
     return df
 
 
-def main():
+def main(window):
 
     
     # dataset A for alternate dataset
@@ -214,12 +271,12 @@ def main():
     df = preprocessing_loaded_data(df)
     df = SpectPep_encoding(df)         # takes about 10mins to run
     df = terminal_composition_raw(df)
-    df = magnus_encoding(df)
+    df = magnus_encoding(df, window)
     df = natural_encoding(df)
 
 
     # save dataframe as a pickle file
-    df.to_pickle("ACP-alternate_dataset_preprocessed_v1.pkl", protocol=4)
+    df.to_pickle("ACP-alternate_dataset_preprocessed_window_5.pkl", protocol=4)
 
 
     # dataset B for main dataset
@@ -227,11 +284,11 @@ def main():
     df = preprocessing_loaded_data(df)
     df = SpectPep_encoding(df)         # takes about 10mins to run
     df = terminal_composition_raw(df)
-    df = magnus_encoding(df)
+    df = magnus_encoding(df, window)
     df = natural_encoding(df)
     # save dataframe as a pickle file
-    df.to_pickle("ACP-main_dataset_preprocessed_v1.pkl", protocol=4)
+    df.to_pickle("ACP-main_dataset_preprocessed_window_5.pkl", protocol=4)
 
 
 if __name__ == "__main__":
-    main()
+    main(window = 5)

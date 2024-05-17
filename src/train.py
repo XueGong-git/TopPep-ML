@@ -22,22 +22,7 @@ from sklearn.model_selection import cross_val_score
 
 # features for alternate dataset (Dataset A)
 
-final_features = [
-    #"Mean_magnus",
-    #"Sum_magnus",
-#    "Natural_Vector",
-    "L0_ev_avg",
-    "L1_ev_avg",
-#    "L0_ev_count",
-#    "L1_ev_count",
-#    "C15_natural",
-#    "C15_magnus_mean"
-]
-
-
-# features for main datset (Dataset B)
-
-#final_features = [
+# final_features = [
 #    "Mean_magnus",
 #    "Sum_magnus",
 #    "Natural_Vector",
@@ -45,35 +30,79 @@ final_features = [
 #    "L1_ev_avg",
 #    "L0_ev_count",
 #    "L1_ev_count",
-#    "N15C15_natural", 
-#    "N15C15_magnus_mean"
-#    ]
+#    "C15_natural",
+#    "C15_magnus_mean"
 
-print(f"Features used: {final_features}")
+#    "N5_natural",
+#    "N5_magnus_mean"
+
+#    "C5_natural",
+#    "C5_magnus_mean"
+
+#    "N5C5_natural",
+#    "N5C5_magnus_mean"
+
+#    "N10_natural",
+#    "N10_magnus_mean"
+
+#    "C10_natural",
+#    "C10_magnus_mean"
+
+#    "N10C10_natural",
+#    "N10C10_magnus_mean"
+
+#    "N15_natural",
+#    "N15_magnus_mean"
+
+#    "C15_natural",
+#    "C15_magnus_mean"
+
+
+#    "N15C15_natural",
+#    "N15C15_magnus_mean"
+
+#]
+
+
+# features for main datset (Dataset B)
+
+final_features = [
+    "Mean_magnus",
+#    "Sum_magnus",
+    "Natural_Vector",
+    "L0_ev_avg",
+    "L1_ev_avg",
+    "L0_ev_count",
+    "L1_ev_count",
+    "N15C15_natural", 
+    "N15C15_magnus_mean"
+    ]
+
+#print(f"Features used: {final_features}")
 
 
 # Extra Trees Params
-#params = {
-#    "n_estimators": 400,
-#    "criterion": "gini",
-#    "n_jobs": -1,
-#    "max_features": "sqrt",
-#}
+params = {
+    "n_estimators": 400,
+    "criterion": "gini",
+    "n_jobs": -1,
+    "max_features": "sqrt",
+}
 
 # Random Forest Params
 # params = {"n_estimators": 400, "n_jobs": -1, "max_features": "sqrt"}
 
 # GBC Params
-params={'n_estimators': 400,
-        'learning_rate': 0.01,
-        'criterion': 'squared_error',
-        'max_features':'sqrt',
-        'subsample':0.8,
-        'loss': 'log_loss',
-        'max_depth': 8}
+#params={'n_estimators': 400,
+#        'learning_rate': 0.01,
+#        'criterion': 'squared_error',
+#        'max_features':'sqrt',
+#        'subsample':0.8,
+#        'loss': 'log_loss',
+#        'max_depth': 8}
 
 
-iters = 5
+iters = 100
 
 
 def getStandardTime():
@@ -193,14 +222,14 @@ def internal_validation(clf, X_train, y_train, cv=5):
     return results
 
 
-def read_pickle(file_path, length=5):
+def read_pickle(file_path, length=None):
     df = pd.read_pickle(file_path)
     df = df[df["Length"] >= length].reset_index(drop=True)
 
     return df
 
 
-def main(dataname = None, scaling=True, thresholding_models=False):
+def main(dataname = None, scaling=True, thresholding_models=False, window = None):
     scale = scaling
     
     if dataname == "A":
@@ -208,19 +237,18 @@ def main(dataname = None, scaling=True, thresholding_models=False):
         df = read_pickle(
         
         # Dataset A (alternate dataset)
-        "ACP-alternate_dataset_preprocessed_v1.pkl"
+        "ACP-alternate_dataset_preprocessed_window_" + str(window) +".pkl", length = window
         )  # insert model pickle file here
     elif dataname == "B":
         df = read_pickle(
         # Dataset B (main dataset) 
-        "ACP-main_dataset_preprocessed_v1.pkl"
+        "ACP-main_dataset_preprocessed_window_" + str(window) +".pkl", length = window
 
         )  # insert model pickle file here
     else:
         raise ValueError(f"Invalid dataset name {dataname}. Choose 'A' for alternate dataset or 'B' for main dataset.")
 
 
-    # df = read_pickle('ACP-preprocessed-terminal_v2.pkl')
     print(f"Dataframe shape:{df.shape}")
     print(f"Scaling is {scale}.")
 
@@ -246,9 +274,9 @@ def main(dataname = None, scaling=True, thresholding_models=False):
     best_acc = 0
 
     for i in range(iters):
-        # clf = ExtraTreesClassifier(**params)
-        # clf = RandomForestClassifier(**params)
-        clf = GradientBoostingClassifier(**params)
+        clf = ExtraTreesClassifier(**params)
+        #clf = RandomForestClassifier(**params)
+        #clf = GradientBoostingClassifier(**params)
         
         dic1 = internal_validation(clf, X_train, y_train)  # internal validation result
         clf.fit(X_train, y_train)
@@ -352,4 +380,4 @@ def main(dataname = None, scaling=True, thresholding_models=False):
 
 
 if __name__ == "__main__":
-    main(dataname = "A", scaling=True, thresholding_models=False )
+    main(dataname = "B", scaling=True, thresholding_models=True, window = 5)
