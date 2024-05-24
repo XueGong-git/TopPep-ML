@@ -63,6 +63,17 @@ from sklearn.model_selection import cross_val_score
 
 #]
 
+final_features = [
+    "Mean_magnus",
+    "Natural_Vector",
+    "L0_ev_avg",
+    "L1_ev_avg",
+    "L0_ev_count",
+    "L1_ev_count",
+    "C15_natural",
+    "C15_magnus_mean"
+]
+
 
 # features for main datset (Dataset B)
 
@@ -73,7 +84,7 @@ final_features = [
     "L0_ev_avg",
     "L1_ev_avg",
     "L0_ev_count",
-    "L1_ev_count",
+    "L1_ev_count"
     "N15C15_natural", 
     "N15C15_magnus_mean"
     ]
@@ -157,7 +168,6 @@ def train_test_split(df, final_features=None, shuffle=False):
         train_data = list(zip(X_train, y_train))
         random.shuffle(train_data)
         X_train, y_train = zip(*train_data)
-
         test_data = list(zip(X_test, y_test))
         random.shuffle(test_data)
         X_test, y_test = zip(*test_data)
@@ -204,7 +214,6 @@ def print_metric(clf, y_test, y_pred):
     results["acc"] = acc
     results["mcc"] = mcc
     results["roc_auc"] = roc_auc
-
     return results
 
 
@@ -225,7 +234,6 @@ def internal_validation(clf, X_train, y_train, cv=5):
 def read_pickle(file_path, length=None):
     df = pd.read_pickle(file_path)
     df = df[df["Length"] >= length].reset_index(drop=True)
-
     return df
 
 
@@ -248,6 +256,8 @@ def main(dataname = None, scaling=True, thresholding_models=False, window = None
     else:
         raise ValueError(f"Invalid dataset name {dataname}. Choose 'A' for alternate dataset or 'B' for main dataset.")
 
+
+    # df = read_pickle('ACP-preprocessed-ßinal_v2.pkl')
 
     print(f"Dataframe shape:{df.shape}")
     print(f"Scaling is {scale}.")
