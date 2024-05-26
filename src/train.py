@@ -392,4 +392,4 @@ def main(dataname = None, scaling=True, thresholding_models=False, window = None
 
 
 if __name__ == "__main__":
-    main(dataname = "B", scaling=True, thresholding_models=True, window = 5)
+    main(dataname = "A", scaling=True, thresholding_models=True, window = 5)
