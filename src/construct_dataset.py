@@ -276,8 +276,7 @@ def main(window):
 
 
     # save dataframe as a pickle file
-    df.to_pickle("ACP-alternate_dataset_preprocessed_window_5.pkl", protocol=4)
-
+    df.to_pickle("ACP-alternate_dataset_preprocessed_window_" + str(window) +".pkl", protocol=4)
 
     # dataset B for main dataset
     df = loading_raw_dataset(dataname = "B")
@@ -287,7 +286,7 @@ def main(window):
     df = magnus_encoding(df, window)
     df = natural_encoding(df)
     # save dataframe as a pickle file
-    df.to_pickle("ACP-main_dataset_preprocessed_window_5.pkl", protocol=4)
+    df.to_pickle("ACP-main_dataset_preprocessed_window_" + str(window) +".pkl", protocol=4)
 
 
 if __name__ == "__main__":

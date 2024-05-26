@@ -63,31 +63,8 @@ from sklearn.model_selection import cross_val_score
 
 #]
 
-final_features = [
-    "Mean_magnus",
-    "Natural_Vector",
-    "L0_ev_avg",
-    "L1_ev_avg",
-    "L0_ev_count",
-    "L1_ev_count",
-    "C15_natural",
-    "C15_magnus_mean"
-]
 
 
-# features for main datset (Dataset B)
-
-final_features = [
-    "Mean_magnus",
-#    "Sum_magnus",
-    "Natural_Vector",
-    "L0_ev_avg",
-    "L1_ev_avg",
-    "L0_ev_count",
-    "L1_ev_count"
-    "N15C15_natural", 
-    "N15C15_magnus_mean"
-    ]
 
 #print(f"Features used: {final_features}")
 
@@ -113,14 +90,14 @@ params = {
 #        'max_depth': 8}
 
 
-iters = 100
+iters = 5
 
 
 def getStandardTime():
     return datetime.today().strftime("%Y-%m-%d-%H_%M")
 
 
-def train_test_split(df, final_features=None, shuffle=False):
+def train_test_split(df, final_features= None, shuffle=False):
     """
     Prepare the data accordingly based on the given final feature vector size
     and final feature column stated.
@@ -247,12 +224,36 @@ def main(dataname = None, scaling=True, thresholding_models=False, window = None
         # Dataset A (alternate dataset)
         "ACP-alternate_dataset_preprocessed_window_" + str(window) +".pkl", length = window
         )  # insert model pickle file here
+        final_features = [
+            "Mean_magnus",
+            #"Sum_magnus",
+            "Natural_Vector",
+            "L0_ev_avg",
+            "L1_ev_avg",
+            "L0_ev_count",
+            "L1_ev_count",
+            "N15C15_natural", 
+            "N15C15_magnus_mean"
+            ]
     elif dataname == "B":
         df = read_pickle(
         # Dataset B (main dataset) 
         "ACP-main_dataset_preprocessed_window_" + str(window) +".pkl", length = window
-
         )  # insert model pickle file here
+        
+        # features for main datset (Dataset B)
+        
+        final_features = [
+  #          "Mean_magnus",
+   #         # "Sum_magnus",
+    #        "Natural_Vector",
+            "L0_ev_avg",
+            "L1_ev_avg",
+       #     "L0_ev_count",
+        #    "L1_ev_count",
+        #    "N15C15_natural", 
+        #    "N15C15_magnus_mean"
+            ]
     else:
         raise ValueError(f"Invalid dataset name {dataname}. Choose 'A' for alternate dataset or 'B' for main dataset.")
 
@@ -355,10 +356,11 @@ def main(dataname = None, scaling=True, thresholding_models=False, window = None
         # Calculate mean and standard deviation for each column
 
         mean_values = best_metrics_all_df.mean()
+        median_values = best_metrics_all_df.median()
         std_dev_values = best_metrics_all_df.std()
 
         # Create a DataFrame with these values
-        summary_df = pd.DataFrame([mean_values, std_dev_values], index=['Mean', 'Standard Deviation'])
+        summary_df = pd.DataFrame([mean_values, median_values, std_dev_values], index=['Mean', 'Median', 'Standard Deviation'])
 
         # Append the summary DataFrame to the original DataFrame
         best_metrics_all_df = pd.concat([best_metrics_all_df, summary_df])
