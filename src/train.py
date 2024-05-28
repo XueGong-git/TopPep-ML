@@ -90,7 +90,7 @@ params = {
 #        'max_depth': 8}
 
 
-iters = 5
+iters = 100
 
 
 def getStandardTime():
@@ -226,14 +226,14 @@ def main(dataname = None, scaling=True, thresholding_models=False, window = None
         )  # insert model pickle file here
         final_features = [
             "Mean_magnus",
-            #"Sum_magnus",
-            "Natural_Vector",
-            "L0_ev_avg",
-            "L1_ev_avg",
-            "L0_ev_count",
-            "L1_ev_count",
-            "N15C15_natural", 
-            "N15C15_magnus_mean"
+            "Sum_magnus",
+            #"Natural_Vector",
+            #"L0_ev_avg",
+            #"L1_ev_avg",
+            #"L0_ev_count",
+            #"L1_ev_count",
+            #"N15C15_natural", 
+            #"N15C15_magnus_mean"
             ]
     elif dataname == "B":
         df = read_pickle(
@@ -244,11 +244,11 @@ def main(dataname = None, scaling=True, thresholding_models=False, window = None
         # features for main datset (Dataset B)
         
         final_features = [
-  #          "Mean_magnus",
-   #         # "Sum_magnus",
+            "Mean_magnus",
+            "Sum_magnus",
     #        "Natural_Vector",
-            "L0_ev_avg",
-            "L1_ev_avg",
+            #"L0_ev_avg",
+            #"L1_ev_avg",
        #     "L0_ev_count",
         #    "L1_ev_count",
         #    "N15C15_natural", 
@@ -314,7 +314,11 @@ def main(dataname = None, scaling=True, thresholding_models=False, window = None
     # get a dataframe of the mean results
     mean_results_df = results_df.mean() # mean test performance
     mean_results_df = mean_results_df.transpose()
-    print(mean_results_df)
+    median_results_df = results_df.median() # mean test performance
+    median_results_df = median_results_df.transpose() # mean test performance
+
+    #print(mean_results_df)
+    print(median_results_df)
 
     # Calculate best threshold and results
 
@@ -374,6 +378,7 @@ def main(dataname = None, scaling=True, thresholding_models=False, window = None
     with pd.ExcelWriter(f"{filePath}/output_{time}.xlsx") as writer:
 
         mean_results_df.to_excel(writer, sheet_name="mean_results")  # mean test performance using prediction threshold of 0.5
+        median_results_df.to_excel(writer, sheet_name="median_results")  # mean test performance using prediction threshold of 0.5
         results_df.to_excel(writer, sheet_name="results")   # test performance using prediction threshold of 0.5
         utils_df.to_excel(writer, sheet_name="parameters") # model parameters
 
@@ -392,4 +397,4 @@ def main(dataname = None, scaling=True, thresholding_models=False, window = None
 
 
 if __name__ == "__main__":
-    main(dataname = "A", scaling=True, thresholding_models=True, window = 5)
+    main(dataname = "B", scaling=True, thresholding_models=False, window = 4)
