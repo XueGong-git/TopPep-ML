@@ -16,7 +16,6 @@ from sklearn.model_selection import cross_val_score
 
 
 
-
 def getStandardTime():
     return datetime.today().strftime("%Y-%m-%d-%H_%M")
 
@@ -148,7 +147,7 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
         # Dataset A (alternate dataset)
         "ACP-alternate_dataset_preprocessed_window_" + str(window) +".pkl", length = window
         )  # insert model pickle file here
-        
+
     elif dataname == "B":
         df = read_pickle(
         # Dataset B (main dataset) 
@@ -234,17 +233,17 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
     params["scale"] = scale
     params["thresholding_models"] = thresholding_models
     params["window"] = window
-    params["iters"] = iters
-
+    params["iters"] = iters    
+    
     features_list = pd.DataFrame(final_features)
     hparams_list = pd.DataFrame.from_dict(params, orient="index")
     utils_df = pd.concat([features_list, hparams_list], axis=1)
 
     # get a dataframe of the mean results
     mean_results_df = results_df.mean() # mean test performance
-    #mean_results_df = mean_results_df.transpose()
+    mean_results_df = mean_results_df.transpose()
     median_results_df = results_df.median() # mean test performance
-    #median_results_df = median_results_df.transpose() # mean test performance
+    median_results_df = median_results_df.transpose() # mean test performance
 
     #print(mean_results_df)
     print(median_results_df)
@@ -304,9 +303,10 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
     os.makedirs(filePath, exist_ok=True)
 
     # read in hyperparameters as well
-    with pd.ExcelWriter(f"{filePath}/Data{dataname}_{classifier}_{time}.xlsx") as writer:
-        median_results_df.to_excel(writer, sheet_name="median_results")  # mean test performance using prediction threshold of 0.5
+    with pd.ExcelWriter(f"{filePath}/output_{time}.xlsx") as writer:
+
         mean_results_df.to_excel(writer, sheet_name="mean_results")  # mean test performance using prediction threshold of 0.5
+        median_results_df.to_excel(writer, sheet_name="median_results")  # mean test performance using prediction threshold of 0.5
         results_df.to_excel(writer, sheet_name="results")   # test performance using prediction threshold of 0.5
         utils_df.to_excel(writer, sheet_name="parameters") # model parameters
 
@@ -324,58 +324,15 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
         print("Results have been populated to excel!")
 
 
-# dataname = [ "A", "B"]
-# classfiers = [ "Etrees", "RF", "GBC"]
-
 if __name__ == "__main__":
-    main(dataname = "A", classifier = "Etrees", scaling=True, thresholding_models=False, window = 5, iters = 100, final_features = [
-      #"Mean_magnus",
-      #"Sum_magnus"
-      #"Natural_Vector",
-      #"L0_ev_avg",
-      #"L1_ev_avg",
-      #"L0_ev_count",
-      #"L1_ev_count",
-      
-      # Terminus for A
-      #"C15_natural",
-      #"C15_magnus_mean"
-      
-      
-      # Terminus for B
-      #    "N15C15_natural",
-      #    "N15C15_magnus_mean"
-
-
-    # All terminus
-    #    "N5_natural",
-    #    "N5_magnus_mean"
-
-    #    "C5_natural",
-    #    "C5_magnus_mean"
-
-    #    "N5C5_natural",
-    #    "N5C5_magnus_mean"
-
-    #    "N10_natural",
-    #    "N10_magnus_mean"
-
-    #    "C10_natural",
-    #    "C10_magnus_mean"
-
-    #    "N10C10_natural",
-    #    "N10C10_magnus_mean"
-
-    #    "N15_natural",
-    #    "N15_magnus_mean"
-
-    #    "C15_natural",
-    #    "C15_magnus_mean"
-
-
-        "N15C15_natural",
-        "N15C15_magnus_mean"
-
-
+    main(dataname = "B", classifier = "Etrees", scaling=True, thresholding_models=True, window = 5, iters = 100, final_features = [
+      "Mean_magnus",
+      "Natural_Vector",
+      "L0_ev_avg",
+      "L1_ev_avg",
+      "L0_ev_count",
+      "L1_ev_count",
+      "N15C15_natural",
+      "N15C15_magnus_mean"
           ]
     )
