@@ -326,7 +326,6 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
 if __name__ == "__main__":
     main(dataname = "A", classifier = "Etrees", scaling=True, thresholding_models=True, window = 5, iters = 100, final_features = [
       "Mean_magnus",
-      "Sum_magnus",
       "Natural_Vector",
       "L0_ev_avg",
       "L1_ev_avg",
