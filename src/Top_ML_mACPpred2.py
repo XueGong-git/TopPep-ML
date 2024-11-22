@@ -342,11 +342,11 @@ if __name__ == "__main__":
     main(dataname = "mACPpred2", classifier = "Etrees", scaling=True, thresholding_models=True, window = 5, iters = 100, final_features = [
       "Mean_magnus",
       "Natural_Vector",
-      "L0_ev_avg",
-      "L1_ev_avg",
+      #"L0_ev_avg",
+      #"L1_ev_avg",
       "L0_ev_count",
       "L1_ev_count",
       "N15C15_natural",
-      "N15C15_magnus_mean"
+      "N15C15_magnus_mean",
           ]
     )
