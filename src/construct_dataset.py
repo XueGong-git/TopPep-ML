@@ -32,6 +32,13 @@ def loading_raw_dataset(dataname) :
         neg_test = read_input("../data/main_dataset/neg_test_main.txt")
         pos_test = read_input("../data/main_dataset/pos_test_main.txt")
         
+    elif dataname == "mACPpred2":
+        neg_train = read_input("../data/mACPpred2.0/neg_train_mACPpred2.txt")
+        pos_train = read_input("../data/mACPpred2.0/pos_train_mACPpred2.txt")
+    
+        neg_test = read_input("../data/mACPpred2.0/neg_test_mACPpred2.txt")
+        pos_test = read_input("../data/mACPpred2.0/pos_test_mACPpred2.txt")
+        
     else:
         raise ValueError(f"Invalid dataset name {dataname}. Choose 'A' for alternate dataset or 'B' for main dataset.")
     
@@ -287,6 +294,18 @@ def main(window):
     df = natural_encoding(df)
     # save dataframe as a pickle file
     df.to_pickle("ACP-main_dataset_preprocessed_window_" + str(window) +".pkl", protocol=4)
+    
+    # dataset A for alternate dataset
+    df = loading_raw_dataset(dataname="mACPpred2")
+    df = preprocessing_loaded_data(df)
+    df = SpectPep_encoding(df)         # takes about 10mins to run
+    df = terminal_composition_raw(df)
+    df = magnus_encoding(df, window)
+    df = natural_encoding(df)
+
+
+    # save dataframe as a pickle file
+    df.to_pickle("mACPpred2_preprocessed_window_" + str(window) +".pkl", protocol=4)
 
 
 if __name__ == "__main__":
