@@ -309,4 +309,4 @@ def main(window):
 
 
 if __name__ == "__main__":
-    main(window = 5)
+    main(window = 4)
