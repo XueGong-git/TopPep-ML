@@ -185,7 +185,8 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
     best_acc = 0
     
 
-    
+    feature_importances_list = []
+
     for i in range(iters):
         
         if classifier == "Etrees":
@@ -214,6 +215,7 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
         
         dic1 = internal_validation(clf, X_train, y_train)  # internal validation result
         clf.fit(X_train, y_train)
+        feature_importances_list.append(clf.feature_importances_)
         clfs.append(clf)
         y_pred = clf.predict(X_test)
         dic2 = print_metric(clf, y_test, y_pred) # test performance
@@ -227,6 +229,27 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
     results_df = pd.DataFrame(all_results) # test performance
     results_df = results_df.round(3)
 
+
+    feature_importances_array = np.array(feature_importances_list)
+    # Compute the mean and standard deviation of feature importances across trials
+    average_importances = feature_importances_array.mean(axis=0)
+    std_importances = feature_importances_array.std(axis=0)
+    
+    # Create a DataFrame for better readability
+    feature_labels = [f"Feature {i}" for i in range(X_train.shape[1])]
+    summary_df = pd.DataFrame({
+        "Feature": feature_labels,
+        "Average Importance": average_importances,
+        "Std Deviation": std_importances
+    }).sort_values(by="Average Importance", ascending=False)
+    
+    # Display the summarized feature importances
+    print(summary_df)
+    summary_df.to_csv("average_feature_importances.csv", index=False)
+    print("Feature importance summary saved to 'average_feature_importances.csv'")
+    feature_importances_array.to_csv("feature_importances.csv", index=False)
+    print("Individual feature importance saved to 'feature_importances.csv'")
+    
     # get a dataframe of the parameters
     params["dataname"] = dataname
     params["classifier"] = classifier
@@ -290,6 +313,9 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
         mean_values = best_metrics_all_df.mean()
         median_values = best_metrics_all_df.median()
         std_dev_values = best_metrics_all_df.std()
+        summary_df.to_excel(writer, sheet_name="average_feature_importance") # model parameters
+        feature_importances_array.to_excel(writer, sheet_name="feature_importance") # model parameters
+
 
         # Create a DataFrame with these values
         summary_df = pd.DataFrame([mean_values, median_values, std_dev_values], index=['Mean', 'Median', 'Standard Deviation'])
