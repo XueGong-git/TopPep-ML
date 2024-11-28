@@ -13,6 +13,7 @@ from sklearn.metrics import matthews_corrcoef
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import roc_curve
 from sklearn.model_selection import cross_val_score
+import matplotlib.pyplot as plt
 
 
 def getStandardTime():
@@ -184,7 +185,8 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
     best_acc = 0
     
 
-    
+    feature_importances_list = []
+
     for i in range(iters):
         
         if classifier == "Etrees":
@@ -213,6 +215,7 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
         
         dic1 = internal_validation(clf, X_train, y_train)  # internal validation result
         clf.fit(X_train, y_train)
+        feature_importances_list.append(clf.feature_importances_)
         clfs.append(clf)
         y_pred = clf.predict(X_test)
         dic2 = print_metric(clf, y_test, y_pred) # test performance
@@ -221,10 +224,37 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
         print(f"{i+1}/{iters} done!")
 
         if dic1["acc"] >= best_acc:
-            best_acc = dic1["acc"]
+            best_acc = dic1["acc"] # best accuracy without tuning threshold
 
     results_df = pd.DataFrame(all_results) # test performance
     results_df = results_df.round(3)
+    
+    feature_importances_array = np.array(feature_importances_list)
+    # Compute the mean and standard deviation of feature importances across trials
+    average_importances = feature_importances_array.mean(axis=0)
+    std_importances = feature_importances_array.std(axis=0)
+    
+    # Create a DataFrame for better readability
+    feature_labels = [f"Feature {i}" for i in range(X_train.shape[1])]
+    summary_df = pd.DataFrame({
+        "Feature": feature_labels,
+        "Average Importance": average_importances,
+        "Std Deviation": std_importances
+    }).sort_values(by="Average Importance", ascending=False)
+    
+    # Display the summarized feature importances
+    print(summary_df)
+    summary_df.to_csv("average_feature_importances.csv", index=False)
+    print("Feature importance summary saved to 'average_feature_importances.csv'")
+    # Plot the average feature importances with error bars
+    plt.figure(figsize=(10, 6))
+    plt.bar(feature_labels, average_importances, yerr=std_importances, capsize=5)
+    plt.title("Average Feature Importances with Standard Deviation")
+    plt.xlabel("Features")
+    plt.ylabel("Importance")
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.show()
 
     # get a dataframe of the parameters
     params["dataname"] = dataname
