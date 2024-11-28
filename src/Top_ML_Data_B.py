@@ -167,6 +167,14 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
         df, final_features=final_features, shuffle=True
     )
 
+    # Save test data
+    np.save("X_test.npy", X_test)
+    np.save("y_test.npy", y_test)
+    
+    # Optionally save train data
+    np.save("X_train.npy", X_train)
+    np.save("y_train.npy", y_train)
+
     print(f"X_train: {X_train.shape}")
     print(f"X_test: {X_test.shape}")
     print(f"y_train: {y_train.shape}")
@@ -237,17 +245,27 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
     
     # Create a DataFrame for better readability
     feature_labels = [f"Feature {i}" for i in range(X_train.shape[1])]
-    summary_df = pd.DataFrame({
+    importance_summary_df = pd.DataFrame({
         "Feature": feature_labels,
         "Average Importance": average_importances,
         "Std Deviation": std_importances
     }).sort_values(by="Average Importance", ascending=False)
     
     # Display the summarized feature importances
-    print(summary_df)
-    summary_df.to_csv("average_feature_importances.csv", index=False)
+    print(importance_summary_df)
+    importance_summary_df.to_csv("average_feature_importances.csv", index=False)
     print("Feature importance summary saved to 'average_feature_importances.csv'")
-    feature_importances_array.to_csv("feature_importances.csv", index=False)
+    
+    # Create feature labels
+    feature_labels = [f"Feature {i}" for i in range(feature_importances_array.shape[1])]
+    
+    # Convert the NumPy array to a DataFrame
+    feature_importances_df = pd.DataFrame(
+    feature_importances_array,  # Array data
+    columns=feature_labels      # Feature names as columns
+    )
+    
+    feature_importances_df.to_csv("feature_importances.csv", index=False)
     print("Individual feature importance saved to 'feature_importances.csv'")
     
     # get a dataframe of the parameters
@@ -313,8 +331,6 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
         mean_values = best_metrics_all_df.mean()
         median_values = best_metrics_all_df.median()
         std_dev_values = best_metrics_all_df.std()
-        summary_df.to_excel(writer, sheet_name="average_feature_importance") # model parameters
-        feature_importances_array.to_excel(writer, sheet_name="feature_importance") # model parameters
 
 
         # Create a DataFrame with these values
@@ -329,7 +345,7 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
     os.makedirs(filePath, exist_ok=True)
 
     # read in hyperparameters as well
-    with pd.ExcelWriter(f"{filePath}/output_{time}.xlsx") as writer:
+    with pd.ExcelWriter(f"{filePath}/ACP_{dataname}_{time}.xlsx") as writer:
 
         mean_results_df.to_excel(writer, sheet_name="mean_results")  # mean test performance using prediction threshold of 0.5
         median_results_df.to_excel(writer, sheet_name="median_results")  # mean test performance using prediction threshold of 0.5
@@ -340,6 +356,8 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
             best_metrics_all_df.to_excel(writer, sheet_name="Thresholded_results")
             best_threshold_result =  best_metrics_all_df.loc[ best_metrics_all_df["acc"] == max(best_metrics_all_df["acc"])]
             best_threshold_result.to_excel(writer, sheet_name="Best_thresholded_results")
+            importance_summary_df.to_excel(writer, sheet_name="average_feature_importance") # model parameters
+            feature_importances_df.to_excel(writer, sheet_name="feature_importance") # model parameters
 
             print(
                 best_metrics_all_df.loc[

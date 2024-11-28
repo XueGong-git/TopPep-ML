@@ -246,6 +246,18 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
     print(summary_df)
     summary_df.to_csv("average_feature_importances.csv", index=False)
     print("Feature importance summary saved to 'average_feature_importances.csv'")
+ 
+    # Create feature labels
+    feature_labels = [f"Feature {i}" for i in range(feature_importances_array.shape[1])]
+    
+    # Convert the NumPy array to a DataFrame
+    feature_importances_df = pd.DataFrame(
+        feature_importances_array,  # Array data
+        columns=feature_labels      # Feature names as columns
+    )
+    feature_importances_array.to_csv("feature_importances.csv", index=False)
+    print("Individual feature importance saved to 'feature_importances.csv'")
+    
     # Plot the average feature importances with error bars
     plt.figure(figsize=(10, 6))
     plt.bar(feature_labels, average_importances, yerr=std_importances, capsize=5)
@@ -332,12 +344,16 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
     os.makedirs(filePath, exist_ok=True)
 
     # read in hyperparameters as well
-    with pd.ExcelWriter(f"{filePath}/Data{dataname}_window_{window}_{time}.xlsx") as writer:
+    with pd.ExcelWriter(f"{filePath}/ACP_{dataname}_window_{window}_{time}.xlsx") as writer:
 
         mean_results_df.to_excel(writer, sheet_name="mean_results")  # mean test performance using prediction threshold of 0.5
         median_results_df.to_excel(writer, sheet_name="median_results")  # mean test performance using prediction threshold of 0.5
         results_df.to_excel(writer, sheet_name="results")   # test performance using prediction threshold of 0.5
         utils_df.to_excel(writer, sheet_name="parameters") # model parameters
+        summary_df.to_excel(writer, sheet_name="average_feature_importance") # model parameters
+        feature_importances_array.to_excel(writer, sheet_name="feature_importance") # model parameters
+
+
 
         if thresholding_models is True:
             best_metrics_all_df.to_excel(writer, sheet_name="Thresholded_results")
