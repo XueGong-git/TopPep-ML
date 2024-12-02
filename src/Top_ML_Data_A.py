@@ -14,7 +14,7 @@ from sklearn.metrics import roc_auc_score
 from sklearn.metrics import roc_curve
 from sklearn.model_selection import cross_val_score
 import matplotlib.pyplot as plt
-
+import seaborn as sns
 
 def getStandardTime():
     return datetime.today().strftime("%Y-%m-%d-%H_%M")
@@ -229,6 +229,8 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
     results_df = pd.DataFrame(all_results) # test performance
     results_df = results_df.round(3)
     
+    
+    ### compute feature importance
     feature_importances_array = np.array(feature_importances_list)
     # Compute the mean and standard deviation of feature importances across trials
     average_importances = feature_importances_array.mean(axis=0)
@@ -236,15 +238,15 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
     
     # Create a DataFrame for better readability
     feature_labels = [f"Feature {i}" for i in range(X_train.shape[1])]
-    summary_df = pd.DataFrame({
+    importance_summary_df = pd.DataFrame({
         "Feature": feature_labels,
         "Average Importance": average_importances,
         "Std Deviation": std_importances
     }).sort_values(by="Average Importance", ascending=False)
     
     # Display the summarized feature importances
-    print(summary_df)
-    summary_df.to_csv("average_feature_importances.csv", index=False)
+    print(importance_summary_df)
+    importance_summary_df.to_csv("average_feature_importances.csv", index=False)
     print("Feature importance summary saved to 'average_feature_importances.csv'")
  
     # Create feature labels
@@ -267,6 +269,21 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
     plt.xticks(rotation=45)
     plt.tight_layout()
     plt.show()
+
+    
+    # plot 10 most important features
+    top_features = importance_summary_df.head(10)['Feature'].tolist()
+    X_test_df = pd.DataFrame(X_test, columns=feature_labels)
+    X_test_top = X_test_df[top_features]
+    for feature in top_features:
+        plt.figure(figsize=(6, 4))
+        sns.boxplot(x=y_test, y=X_test_top[feature])
+        plt.title(f'{feature}')
+        plt.xlabel('ACP')
+        plt.ylabel('Feature Value')
+        plot_filename = f'Data_{dataname}_{feature}.png'
+        plt.savefig(plot_filename, dpi=300, bbox_inches='tight')
+        plt.close()
 
     # get a dataframe of the parameters
     params["dataname"] = dataname
@@ -350,8 +367,8 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
         median_results_df.to_excel(writer, sheet_name="median_results")  # mean test performance using prediction threshold of 0.5
         results_df.to_excel(writer, sheet_name="results")   # test performance using prediction threshold of 0.5
         utils_df.to_excel(writer, sheet_name="parameters") # model parameters
-        summary_df.to_excel(writer, sheet_name="average_feature_importance") # model parameters
-        feature_importances_array.to_excel(writer, sheet_name="feature_importance") # model parameters
+        importance_summary_df.to_excel(writer, sheet_name="average_feature_importance") # model parameters
+        feature_importances_df.to_excel(writer, sheet_name="feature_importance") # model parameters
 
 
 
