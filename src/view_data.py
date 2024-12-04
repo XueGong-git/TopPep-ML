@@ -58,6 +58,11 @@ X_test_df = pd.DataFrame(X_test)
 Y_test_df = pd.DataFrame(Y_test)
 
 
+for i in range(X_test_df.shape[0]):
+    X_test_df['non_zero'][i] = (X_test_df.iloc[i, 500:900] != 0).sum()
+
+print((X_test_df.iloc[2, 500:900] != 0).sum())
+
 
 # Display additional details
 print(f"Shape of DataFrame: {X_test_df.shape}")
