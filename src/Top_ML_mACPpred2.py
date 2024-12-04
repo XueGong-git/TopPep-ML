@@ -259,9 +259,9 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
     }).sort_values(by="Average Importance", ascending=False)
     
     # Display the summarized feature importances
-    print(importance_summary_df)
-    importance_summary_df.to_csv("average_feature_importances.csv", index=False)
-    print("Feature importance summary saved to 'average_feature_importances.csv'")
+    #print(importance_summary_df)
+    #importance_summary_df.to_csv("average_feature_importances.csv", index=False)
+    #print("Feature importance summary saved to 'average_feature_importances.csv'")
  
     # Create feature labels
     feature_labels = [f"Feature {i}" for i in range(feature_importances_array.shape[1])]
@@ -271,8 +271,8 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
         feature_importances_array,  # Array data
         columns=feature_labels      # Feature names as columns
     )
-    feature_importances_array.to_csv("feature_importances.csv", index=False)
-    print("Individual feature importance saved to 'feature_importances.csv'")
+    #feature_importances_array.to_csv("feature_importances.csv", index=False)
+    #print("Individual feature importance saved to 'feature_importances.csv'")
     
     # Plot the average feature importances with error bars
     plt.figure(figsize=(10, 6))
