@@ -284,6 +284,7 @@ def gen_eigenvalues(input):
 
     """
     vals = np.linalg.eigvalsh(input)
+    vals = vals[-50:]
     return np.array(
         [i if i > 1e-3 else 0 for i in vals]
     )  # for eigenvalues less than 1e-3, fix them = 0
