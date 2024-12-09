@@ -252,11 +252,7 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
         "Std Deviation": std_importances
     }).sort_values(by="Average Importance", ascending=False)
     
-    # Display the summarized feature importances
-    print(importance_summary_df)
-    importance_summary_df.to_csv("average_feature_importances.csv", index=False)
-    print("Feature importance summary saved to 'average_feature_importances.csv'")
-    
+
     # Create feature labels
     feature_labels = [f"Feature {i}" for i in range(feature_importances_array.shape[1])]
     
@@ -266,8 +262,7 @@ def main(dataname = None, classifier = None, scaling=True, thresholding_models=F
     columns=feature_labels      # Feature names as columns
     )
     
-    feature_importances_df.to_csv("feature_importances.csv", index=False)
-    print("Individual feature importance saved to 'feature_importances.csv'")
+
     
     # plot 10 most important features
     top_features = importance_summary_df.head(10)['Feature'].tolist()
