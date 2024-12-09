@@ -22,21 +22,31 @@ logging.info("Starting parameter testing script.")
 
 # Define parameter values
 datanames = ["mACPpred2"]  # Add more datanames if needed
-classifiers = [ "RF", "GBC"] #, "SVM", "RandomForest"]  # Add more classifiers
-scaling_options = [True]
+classifiers = [ "Etrees"] #, "SVM", "RandomForest"]  # Add more classifiers
+scaling_options = [False]
 thresholding_models_options = [True]
-windows = [4, 5]  # Add more window sizes
+windows = [5]  # Add more window sizes
 iterations = [100]  # Add more iteration counts
 feature_sets = [
-    ["Mean_magnus", "Natural_Vector", "L0_ev_count", "L1_ev_count", "L0_ev_avg",  "L1_ev_avg", "N5_natural", "N5_magnus_mean"],
-    ["Mean_magnus", "Natural_Vector", "L0_ev_count", "L1_ev_count", "L0_ev_avg",  "L1_ev_avg", "N10_natural", "N10_magnus_mean"],
-    ["Mean_magnus", "Natural_Vector", "L0_ev_count", "L1_ev_count", "L0_ev_avg",  "L1_ev_avg", "N15_natural", "N15_magnus_mean"],
-    ["Mean_magnus", "Natural_Vector", "L0_ev_count", "L1_ev_count", "L0_ev_avg",  "L1_ev_avg", "C5_natural", "C5_magnus_mean"],
-    ["Mean_magnus", "Natural_Vector", "L0_ev_count", "L1_ev_count", "L0_ev_avg",  "L1_ev_avg", "C10_natural", "C10_magnus_mean"],
-    ["Mean_magnus", "Natural_Vector", "L0_ev_count", "L1_ev_count", "L0_ev_avg",  "L1_ev_avg", "C15_natural", "C15_magnus_mean"],
-    ["Mean_magnus", "Natural_Vector", "L0_ev_count", "L1_ev_count", "L0_ev_avg",  "L1_ev_avg", "N5C5_natural", "N5C5_magnus_mean"],
-    ["Mean_magnus", "Natural_Vector", "L0_ev_count", "L1_ev_count", "L0_ev_avg",  "L1_ev_avg", "N10C10_natural", "N10C10_magnus_mean"],
-    ["Mean_magnus", "Natural_Vector", "L0_ev_count", "L1_ev_count", "L0_ev_avg",  "L1_ev_avg", "N15C15_natural", "N15C15_magnus_mean"],
+    ["Mean_magnus", "Natural_Vector",  "L0_ev_avg",  "L1_ev_avg", "N5_natural", "N5_magnus_mean"],
+    ["Mean_magnus", "Natural_Vector",  "L0_ev_avg",  "L1_ev_avg", "N10_natural", "N10_magnus_mean"],
+    ["Mean_magnus", "Natural_Vector",  "L0_ev_avg",  "L1_ev_avg", "N15_natural", "N15_magnus_mean"],
+    ["Mean_magnus", "Natural_Vector",  "L0_ev_avg",  "L1_ev_avg", "C5_natural", "C5_magnus_mean"],
+    ["Mean_magnus", "Natural_Vector",  "L0_ev_avg",  "L1_ev_avg", "C10_natural", "C10_magnus_mean"],
+    ["Mean_magnus", "Natural_Vector",  "L0_ev_avg",  "L1_ev_avg", "C15_natural", "C15_magnus_mean"],
+    ["Mean_magnus", "Natural_Vector",  "L0_ev_avg",  "L1_ev_avg", "N5C5_natural", "N5C5_magnus_mean"],
+    ["Mean_magnus", "Natural_Vector",  "L0_ev_avg",  "L1_ev_avg", "N10C10_natural", "N10C10_magnus_mean"],
+    ["Mean_magnus", "Natural_Vector",  "L0_ev_avg",  "L1_ev_avg", "N15C15_natural", "N15C15_magnus_mean"],
+    
+    ["Mean_magnßus", "Natural_Vector", "L0_ev_count", "L1_ev_count",  "N5_natural", "N5_magnus_mean"],
+    ["Mean_magnus", "Natural_Vector", "L0_ev_count", "L1_ev_count",  "N10_natural", "N10_magnus_mean"],
+    ["Mean_magnus", "Natural_Vector", "L0_ev_count", "L1_ev_count",  "N15_natural", "N15_magnus_mean"],
+    ["Mean_magnus", "Natural_Vector", "L0_ev_count", "L1_ev_count",  "C5_natural", "C5_magnus_mean"],
+    ["Mean_magnus", "ßNatural_Vector", "L0_ev_count", "L1_ev_count",  "C10_natural", "C10_magnus_mean"],
+    ["Mean_magnus", "Natural_Vector", "L0_ev_count", "L1_ev_count",  "C15_natural", "C15_magnus_mean"],
+    ["Mean_magnus", "Natural_Vector", "L0_ev_count", "L1_ev_count",  "N5C5_natural", "N5C5_magnus_mean"],
+    ["Mean_magnus", "Natural_Vector", "L0_ev_count", "L1_ev_count",  "N10C10_natural", "N10C10_magnus_mean"],
+    ["Mean_magnus", "Natural_Vector", "L0_ev_count", "L1_ev_count",  "N15C15_natural", "N15C15_magnus_mean"]
 
 ]
 
